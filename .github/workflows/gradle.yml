@@ -1,8 +1,13 @@
-name: C2ME Build Script
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -12,25 +17,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
-        java-version: 11
-        
-    - uses: actions/cache@v2
+        java-version: '11'
+        distribution: 'adopt'
+        cache: gradle
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - run: ./gradlew build
+    - run: ./gradlew jar
+    - uses: actions/upload-artifact@v2
       with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-        
-    - name: Build C2ME
-      run: |
-        ./gradlew build
-        
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: c2me-artifact
-        path: '**/build/libs/*-all.jar'
+        name: snow
+        path: build/libs/

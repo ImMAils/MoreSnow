@@ -24,7 +24,6 @@ jobs:
         cache: gradle
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - run: ./gradlew build
     - run: ./gradlew jar
     - uses: actions/upload-artifact@v2
       with:
